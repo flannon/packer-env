@@ -24,11 +24,13 @@
       ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
     ]
   }], 
-  "provisioners": [{
+  "provisioners": [
+  {
     "type": "shell",
     "environment_vars": [
       "SSH_USERNAME={{ user `ssh_username` }}",
-      "SSH_PASSWORD={{ user `ssh_password` }}"
+      "SSH_PASSWORD={{ user `ssh_password` }}",
+      "PUPPET_REPO={{ user `puppet_repo` }}"
       ],
     "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
     "pause_before": "5s",
@@ -36,10 +38,21 @@
       "scripts/virtualbox.sh",
       "scripts/vagrant.sh",
       "scripts/sshd.sh",
-      "scripts/puppet.sh",
-      "scripts/cleanup.sh"
+      "scripts/motd.sh",
+      "scripts/locale.sh",
+      "scripts/puppet.sh"
     ]
-  }],
+  },
+  {
+    "type": "shell",
+    "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+    "pause_before": "5s",
+    "scripts": [
+    "scripts/cleanup.sh",
+    "scripts/rc.local.sh"
+    ]
+  }
+  ],
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{ user `compression_level` }}",
@@ -56,6 +69,7 @@
     "kickstart": "anaconda-ks7.cfg",
     "memory": "512",
     "mirror": "http://mirrors.kernel.org/centos",
+    "puppet_repo": "puppetlabs-release-pc1-el-7",
     "ssh_timeout": "60m",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
