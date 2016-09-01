@@ -5,6 +5,7 @@ box/*
 iso/*
 output-*/
 packer_cache/
+scripts/depricated/*
 *.tar.gz
 crash.log
 tmp
