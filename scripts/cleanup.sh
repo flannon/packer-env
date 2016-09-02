@@ -20,8 +20,8 @@ fi
 
 
 echo "Clear  temporary files used to build box"
-rm -rf /tmp/*
-rm -rf /var/tmp/*
+#rm -rf /tmp/*
+#rm -rf /var/tmp/*
 
 echo "Rebuild RPM DB"
 rpmdb --rebuilddb

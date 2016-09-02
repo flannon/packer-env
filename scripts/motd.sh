@@ -30,10 +30,11 @@ cat << EOF > $MOTD_FILE
 
 
 
-                                  __          __ 
-                                  /_  _ '_ /_//_  
-                                  __)(-/(//)/ __) 
-                                       _/         packer-vagrant-puppet
+                                    __          __ 
+                                    /_  _ '_ /_//_  
+                                    __)(-/(//)/ __) 
+                                         _/         packer-vagrant-puppet
+
 
 EOF
 printf '%0.1s' "-"{1..80} >> $MOTD_FILE
