@@ -1,4 +1,5 @@
 {
+
   "builders": [{
     "type": "virtualbox-iso",
     "boot_wait": "10s",
@@ -24,6 +25,7 @@
       ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
     ]
   }], 
+
   "provisioners": [
   {
     "type": "shell",
@@ -43,6 +45,22 @@
       "scripts/puppet.sh"
     ]
   },
+
+  {
+    "type": "puppet-masterless",
+    "execute_command": "echo 'vagrant' | sudo -S -E {{ .FacterVars }} PATH=$PATH:/opt/puppetlabs/bin /opt/puppetlabs/bin/puppet apply --verbose --detailed-exitcodes --modulepath='{{ .ModulePath }}' {{ .ManifestFile }}",
+    "facter" : {
+      "fqdn" : "{{ user `vm_name` }}"
+    },
+    "manifest_file": "puppet/manifests/default.pp",
+    "module_paths": [
+      "puppet/modules/local",
+      "puppet/modules/sites",
+      "puppet/modules/thirdparty"
+      ],
+      "prevent_sudo": true
+  },
+
   {
     "type": "shell",
     "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
@@ -51,13 +69,14 @@
     "scripts/cleanup.sh",
     "scripts/rc.local.sh"
     ]
-  }
-  ],
+  }],
+
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{ user `compression_level` }}",
     "output": "box/{{ .Provider }}/centos-7.2-x86_64-{{ .Provider }}.box"
   }],
+
   "variables": {
     "compression_level": "6",
     "cpus": "1",
@@ -76,4 +95,5 @@
     "virtualbox_guest_os_type": "RedHat_64",
     "vm_name": "centos-7-2-1511"
   }
+
 }
