@@ -1,5 +1,6 @@
 {
 
+  "_comment": "Build with `packer build centos7.2.json`",
   "builders": [{
     "type": "virtualbox-iso",
     "boot_wait": "10s",
@@ -48,11 +49,11 @@
 
   {
     "type": "puppet-masterless",
-    "execute_command": "echo 'vagrant' | sudo -S -E {{ .FacterVars }} PATH=$PATH:/opt/puppetlabs/bin /opt/puppetlabs/bin/puppet apply --verbose --detailed-exitcodes --modulepath='{{ .ModulePath }}' {{ .ManifestFile }}",
+    "execute_command": "if [ ! -z \"{{user `manifest_file` }}\" ]; then echo 'vagrant' | sudo -S -E {{ .FacterVars }} PATH=$PATH:/opt/puppetlabs/bin /opt/puppetlabs/bin/puppet apply --verbose --detailed-exitcodes --modulepath='{{ .ModulePath }}' {{ .ManifestFile }}; fi",
     "facter" : {
       "fqdn" : "{{ user `vm_name` }}"
     },
-    "manifest_file": "puppet/manifests/default.pp",
+    "manifest_file": "{{ user `manifest_file` }}",
     "module_paths": [
       "puppet/modules/local",
       "puppet/modules/sites",
@@ -74,7 +75,7 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{ user `compression_level` }}",
-    "output": "box/{{ .Provider }}/centos-7.2-x86_64-{{ .Provider }}.box"
+    "output": "{{ user `role` }}/box/{{ .Provider }}/centos-7.2-x86_64-{{ .Provider }}-{{ user `role` }}.box"
   }],
 
   "variables": {
@@ -86,9 +87,11 @@
     "iso_checksum_type": "sha256",
     "iso_name": "CentOS-7-x86_64-Minimal-1511.iso",
     "kickstart": "anaconda-ks7.cfg",
+    "manifest_file": "puppet/manifests/default.pp",
     "memory": "512",
     "mirror": "http://mirrors.kernel.org/centos",
     "puppet_repo": "puppetlabs-release-pc1-el-7",
+    "role": "",
     "ssh_timeout": "60m",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
