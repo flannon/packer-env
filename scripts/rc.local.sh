@@ -1,13 +1,16 @@
 #!/bin/bash -eux
-#
-# Generate new machine-id on vagrant node boot.
-#
-chmod 755 /etc/rc.d/rc.local
+if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
 
-cat << EOF >> /etc/rc.local
+    #
+    # Generate new machine-id on vagrant node boot.
+    #
+    chmod 755 /etc/rc.d/rc.local
 
-if [[ ! -f /etc/machine-id ]]; then
-    /usr/bin/systemd-machine-id-setup
+    cat << EOF >> /etc/rc.local
+
+    if [[ ! -f /etc/machine-id ]]; then
+        /usr/bin/systemd-machine-id-setup
+    fi
+
+    EOF
 fi
-
-EOF
