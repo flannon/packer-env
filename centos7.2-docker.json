@@ -1,0 +1,89 @@
+{
+
+  "_comment": "Build with `TMPDIR=./tmp packer build centos7.2.json`",
+  "builders": [{
+    "type": "docker",
+    "image": "centos:7",
+    "commit": true,
+    "ssh_timeout": "{{ user `ssh_timeout` }}",
+    "ssh_username": "{{ user `ssh_username` }}",
+    "ssh_password": "{{ user `ssh_password` }}"
+  }], 
+  "provisioners": [
+  {
+    "type": "shell",
+    "environment_vars": [
+      "SSH_USERNAME={{ user `ssh_username` }}",
+      "SSH_PASSWORD={{ user `ssh_password` }}",
+      "PUPPET_REPO={{ user `puppet_repo` }}"
+      ],
+    "pause_before": "5s",
+    "scripts": [
+      "scripts/virtualbox.sh",
+      "scripts/vagrant.sh",
+      "scripts/sshd.sh",
+      "scripts/motd.sh",
+      "scripts/locale.sh",
+      "scripts/puppet.sh"
+    ]
+  },
+
+  {
+    "type": "puppet-masterless",
+    "execute_command": "if [ ! -z \"{{user `manifest_file` }}\" ]; then {{ .FacterVars }} PATH=$PATH:/opt/puppetlabs/bin /opt/puppetlabs/bin/puppet apply --verbose --detailed-exitcodes --modulepath='{{ .ModulePath }}' {{ .ManifestFile }}; fi",
+    "facter" : {
+      "fqdn" : "{{ user `vm_name` }}"
+    },
+    "manifest_file": "{{ user `manifest_file` }}",
+    "module_paths": [
+      "puppet/modules/local",
+      "puppet/modules/sites",
+      "puppet/modules/thirdparty"
+      ],
+      "prevent_sudo": true
+  },
+
+  {
+    "type": "shell",
+    "pause_before": "5s",
+    "scripts": [
+    "scripts/cleanup.sh"
+    ]
+  }],
+
+  "post-processors": [
+  {
+    "type": "docker-save",
+    "path": "build/default/container/centos-7.2-x86_64-docker-default-0.1.1.tar"
+  },
+  {
+      "type": "docker-tag",
+      "repository": "flannon/packer",
+      "tag": "default.packer"
+
+  }
+  ],
+
+  "variables": {
+    "compression_level": "6",
+    "cpus": "1",
+    "disk_size": "65536",
+    "headless": "",
+    "iso_checksum": "f90e4d28fa377669b2db16cbcb451fcb9a89d2460e3645993e30e137ac37d284",
+    "iso_checksum_type": "sha256",
+    "iso_name": "CentOS-7-x86_64-Minimal-1511.iso",
+    "kickstart": "anaconda-ks7.cfg",
+    "manifest_file": "puppet/manifests/noop.pp",
+    "memory": "512",
+    "mirror": "http://mirrors.kernel.org/centos",
+    "puppet_repo": "puppetlabs-release-pc1-el-7",
+    "role": "default",
+    "ssh_timeout": "60m",
+    "ssh_username": "docker",
+    "ssh_password": "tcuser",
+    "version": "0.1.0",
+    "virtualbox_guest_os_type": "RedHat_64",
+    "vm_name": "centos-7-2-1511"
+  }
+
+}
