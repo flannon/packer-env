@@ -1,6 +1,7 @@
 #!/bin/bash -eux
 
-if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
+if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]] || \
+   [[ $PACKER_BUILDER_TYPE =~ amazon-ebs ]]; then
 
     echo "Set locale to en_US.utf8"
 
