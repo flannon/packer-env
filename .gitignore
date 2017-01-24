@@ -1,0 +1,13 @@
+box/*
+*.box
+build
+.bundle/
+.DS_Store
+output-*/
+Makefile.local
+packer_cache/
+*.swp
+tmp
+.tmpatlas/
+.vagrant/
+vagrantfile-templates
