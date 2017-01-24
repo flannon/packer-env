@@ -1,7 +1,33 @@
 #!/bin/bash -eux
 
-if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]] \
-   [[ $PACKER_BUILDER_TYPE =~ amazon-ebs ]]; then
+# Build for EC2
+if [[ $PACKER_BUILDER_TYPE =~ amazon-ebs ]]; then
+
+    echo "Running puppet install script"
+
+    echo "Installing Puppet"
+
+    REDHAT_MAJOR_VERSION=$(egrep -Eo 'release ([0-9][0-9.]*)' /etc/redhat-release | cut -f2 -d' ' | cut -f1 -d.)
+
+    if [[ $REDHAT_MAJOR_VERSION == 7 ]] && [[ $PUPPET_REPO =~ puppetlabs-release-pc1-el-7 ]]; then
+
+        echo "Installing Puppet Labs repositories"
+        #wget http://yum.puppetlabs.com/${PUPPET_REPO}.noarch.rpm
+
+        sudo bash -c "rpm -ipv http://yum.puppetlabs.com/${PUPPET_REPO}.noarch.rpm"
+        #rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+
+        #sudo bash -c "yum localinstall http://yum.puppetlabs.com/${PUPPET_REPO}.noarch.rpm"
+
+
+        sudo bash -c "yum -y install puppet-agent"
+
+    fi
+
+fi
+
+# Build for VirtualBox
+if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
 
     echo "Running puppet install script"
 
