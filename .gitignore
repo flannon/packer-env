@@ -3,7 +3,6 @@ box/*
 build
 .bundle/
 .DS_Store
-iso/*
 output-*/
 Makefile.local
 packer_cache/
