@@ -6,11 +6,8 @@ if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
     #
     chmod 755 /etc/rc.d/rc.local
 
-    cat << EOF >> /etc/rc.local
-
-    if [[ ! -f /etc/machine-id ]]; then
-        /usr/bin/systemd-machine-id-setup
-    fi
-
-    EOF
+    echo 'if [[ ! -f /etc/machine-id ]]; then' >> /etc/rc.local
+    echo '/usr/bin/systemd-machine-id-setup' >> /etc/rc.local
+    echo 'fi' >> /etc/rc.local
+    
 fi
