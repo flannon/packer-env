@@ -11,13 +11,8 @@ if [[ $PACKER_BUILDER_TYPE =~ amazon-ebs ]]; then
     if [[ $REDHAT_MAJOR_VERSION == 7 ]] && [[ $PUPPET_REPO =~ puppetlabs-release-pc1-el-7 ]]; then
 
         echo "Installing Puppet Labs repositories"
-        #wget http://yum.puppetlabs.com/${PUPPET_REPO}.noarch.rpm
 
-        sudo bash -c "rpm -ipv http://yum.puppetlabs.com/${PUPPET_REPO}.noarch.rpm"
-        #rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-
-        #sudo bash -c "yum localinstall http://yum.puppetlabs.com/${PUPPET_REPO}.noarch.rpm"
-
+        sudo bash -c "yum localinstall -y http://yum.puppetlabs.com/${PUPPET_REPO}.noarch.rpm"
 
         sudo bash -c "yum -y install puppet-agent"
 

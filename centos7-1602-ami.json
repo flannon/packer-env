@@ -6,8 +6,8 @@
     "source_ami": "ami-6d1c2007",
     "instance_type": "t2.micro",
     "ssh_username": "centos",
-    "ami_name": "alfred-3-centos-7-1602 {{timestamp}}",
-    "ami_description": "Alfred 3 Centos 7 1602",
+    "ami_name": "{{ user `role` }} centos-7-1602 {{ timestamp }}",
+    "ami_description": "{{ user `role` }} Centos 7 1602",
     "ami_virtualization_type": "hvm",
     "security_group_id": "sg-e27fb486",
     "launch_block_device_mappings": [{
@@ -23,7 +23,7 @@
       "delete_on_termination": true
     }],
     "tags": {
-      "Name": "Alfred-2-AMI",
+      "Name": "{{ user `role` }}-AMI",
       "OS_Version": "Centos 7",
       "Release": "Latest"
     },
@@ -35,19 +35,35 @@
     "type": "shell",
     "inline": [ "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done" ],
     "inline": [ "sudo bash -c \"sed -s 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config\"" ],
-    "inline": [ "sudo bash -c \"yum install -y wget\"" ]
+    "inline": [ "sudo bash -c \"yum install -y wget git\"" ]
   },
   {
     "type": "shell",
     "environment_vars": [
+      "EC2_USER={{ user `ec2_user` }}",
       "PUPPET_REPO={{ user `puppet_repo` }}",
-      "EC2_USER={{ user `ec2_user` }}"
+      "ROLE={{ user `role` }}"
       ],
 
     "scripts": [
       "scripts/cloudinit.sh",
       "scripts/puppet.sh"
     ]
+  },
+  {
+    "type": "puppet-masterless",
+    "execute_command": "if [ ! -z \"{{user `manifest_file` }}\" ]; then echo 'vagrant' | sudo -S -E {{ .FacterVars }} PATH=$PATH:/opt/puppetlabs/bin /opt/puppetlabs/bin/puppet apply --verbose --detailed-exitcodes --modulepath='{{ .ModulePath }}' {{ .ManifestFile }}; fi",
+    "facter" : { 
+      "fqdn" : "{{ user `vm_name` }}" 
+    },  
+    "manifest_file": "{{ user `manifest_file` }}",
+    "module_paths": [
+      "puppet/environments/development/modules/local",
+      "puppet/environments/development/modules/sites",
+      "puppet/environments/development/modules/thirdparty"
+      ],  
+      "prevent_sudo": true,
+      "ignore_exit_codes": true
   },
   {
     "type": "shell",
@@ -63,11 +79,11 @@
     "iso_checksum_type": "sha256",
     "iso_name": "CentOS-7-x86_64-Minimal-1511.iso",
     "kickstart": "anaconda-ks7.cfg",
-    "manifest_file": "puppet/manifests/noop.pp",
+    "manifest_file": "puppet/environments/development/manifests/default.pp",
     "memory": "512",
     "mirror": "http://mirrors.kernel.org/centos",
     "puppet_repo": "puppetlabs-release-pc1-el-7",
-    "role": "default",
+    "role": "uqbar",
     "ssh_timeout": "60m",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
