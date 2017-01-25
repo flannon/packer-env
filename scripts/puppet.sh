@@ -25,7 +25,7 @@ if [[ $PACKER_BUILDER_TYPE =~ amazon-ebs ]]; then
 
     echo "Set up staging directory for the puppet run."
     mkdir /tmp/packer-puppet-masterless
-    chown ${EC2_user}:${EC2_user} /tmp/packer-puppet-masterless
+    chown ${EC2_USER}:${EC2_USER} /tmp/packer-puppet-masterless
     chmod 777 /tmp/packer-puppet-masterless
 
     if [[ -f /home/vagrant/${PUPPET_REPO}.noarch.rpm ]]; then
