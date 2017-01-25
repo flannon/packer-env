@@ -10,7 +10,6 @@
     "ami_description": "Alfred 3 Centos 7 1602",
     "ami_virtualization_type": "hvm",
     "security_group_id": "sg-e27fb486",
-    "shutdown_behavior": "terminate",
     "launch_block_device_mappings": [{
       "device_name": "/dev/sda1",
       "volume_size": 8,
@@ -41,13 +40,18 @@
   {
     "type": "shell",
     "environment_vars": [
-      "PUPPET_REPO={{ user `puppet_repo` }}"
+      "PUPPET_REPO={{ user `puppet_repo` }}",
+      "EC2_USER={{ user `ec2_user` }}"
       ],
 
     "scripts": [
       "scripts/cloudinit.sh",
       "scripts/puppet.sh"
     ]
+  },
+  {
+    "type": "shell",
+    "inline": [ "sudo bash -c \"yum -y update\"" ]
   }],
 
   "variables": {
@@ -67,6 +71,7 @@
     "ssh_timeout": "60m",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
+    "ec2_username": "centos",
     "version": "0.1.0",
     "virtualbox_guest_os_type": "RedHat_64",
     "vm_name": "centos-7-1602"
