@@ -23,9 +23,9 @@
       "delete_on_termination": true
     }],
     "tags": {
-      "Name": "{{ user `role` }}-AMI",
-      "OS_Version": "Centos 7",
-      "Release": "Latest"
+      "Name": "{{ user `role` }}{{ user `os_version` }}.{{ user `os_release` }}AMI",
+      "OS_Version": "{{ user `os_version` }}",
+      "Release": "{{ user `os_release` }}"
     },
     "ssh_pty": true
   }],
@@ -34,7 +34,6 @@
   {
     "type": "shell",
     "inline": [ "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done" ],
-    "inline": [ "sudo bash -c \"sed -s 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config\"" ],
     "inline": [ "sudo bash -c \"yum install -y wget git\"" ]
   },
   {
@@ -67,7 +66,8 @@
   },
   {
     "type": "shell",
-    "inline": [ "sudo bash -c \"yum -y update\"" ]
+    "inline": [ "sudo bash -c \"yum -y update\"" ],
+    "inline": [ "sudo bash -c \"/usr/bin/sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config\"" ]
   }],
 
   "variables": {
@@ -82,8 +82,10 @@
     "manifest_file": "puppet/environments/development/manifests/default.pp",
     "memory": "512",
     "mirror": "http://mirrors.kernel.org/centos",
+    "os_version": "Centos7",
+    "os_release": "1602",
     "puppet_repo": "puppetlabs-release-pc1-el-7",
-    "role": "uqbar",
+    "role": "Uqbar",
     "ssh_timeout": "60m",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
