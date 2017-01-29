@@ -1,6 +1,7 @@
 #!/bin/bash -eux
 
-if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
+if [[ $PACKER_BUILDER_TYPE =~ amazon-ebs ]] || \
+   [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
 
     echo "Remove machine-id from the box image"
     rm -f /etc/machine-id
@@ -9,10 +10,9 @@ if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
         rpm -q --whatprovides kernel | grep -Fv "$(uname -r)" | xargs yum -y autoremove
     fi
 
-    #sudo yum --enablerepo=epel clean all
-    #yum clean all
-    #yum history new
-    #truncate -c -s 0 /var/log/yum.log
+    yum clean all
+    yum history new
+    truncate -c -s 0 /var/log/yum.log
 
     
     #echo "Set locale to en_US.utf8"
@@ -22,8 +22,8 @@ if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
 
 
     echo "Clear  temporary files used to build box"
-    #rm -rf /tmp/*
-    #rm -rf /var/tmp/*
+    rm -rf /tmp/*
+    rm -rf /var/tmp/*
 
     echo "Rebuild RPM DB"
     rpmdb --rebuilddb
@@ -53,9 +53,8 @@ if [[ $PACKER_BUILDER_TYPE =~ virtualbox-iso ]]; then
     #echo "Rebooting..."
     #reboot
     #sleep 30
-fi
 
-if [[ $PACKER_BUILDER_TYPE =~ docker ]]; then
+elif [[ $PACKER_BUILDER_TYPE =~ docker ]]; then
 
     echo "Clear  temporary files used to build box"
     #rm -rf /tmp/*
