@@ -35,10 +35,11 @@
       "fqdn" : "{{ user `vm_name` }}"
     },
     "manifest_file": "{{ user `manifest_file` }}",
+    "manifest_file": "puppetlabs/code/environments/{{ user `environment` }}/manifests/{{ user `role` }}.pp",
     "module_paths": [
-      "puppet/modules/local",
-      "puppet/modules/sites",
-      "puppet/modules/thirdparty"
+      "puppetlabs/code/modules/local",
+      "puppetlabs/code/modules/sites",
+      "puppetlabs/code/environments/{{ user `environment` }}/modules"
       ],
       "prevent_sudo": true
   },
@@ -54,17 +55,20 @@
   "post-processors": [
   {
     "type": "docker-save",
-    "path": "build/default/container/centos-7.2-x86_64-docker-default-0.1.1.tar"
+    "path": "build/default/docker_images/centos-7.2-x86_64-docker-default-0.1.1.tar"
   },
   {
       "type": "docker-tag",
-      "repository": "flannon/packer",
-      "tag": "default.packer"
+      "repository": "nyulibraries/loris",
+      "tag": "latest"
 
   }
   ],
 
   "variables": {
+    "role": "loris",
+    "environment": "docker",
+    "manifest_file": "puppetlabs/code/environments/docker/manifests/docker.pp",
     "compression_level": "6",
     "cpus": "1",
     "disk_size": "65536",
@@ -74,11 +78,9 @@
     "iso_checksum_type": "sha256",
     "iso_name": "CentOS-7-x86_64-Minimal-1611.iso",
     "kickstart": "anaconda-ks7.cfg",
-    "manifest_file": "puppet/manifests/noop.pp",
     "memory": "512",
     "mirror": "http://mirrors.kernel.org/centos",
     "puppet_repo": "puppetlabs-release-pc1-el-7",
-    "role": "default",
     "ssh_timeout": "60m",
     "ssh_username": "docker",
     "ssh_password": "tcuser",
