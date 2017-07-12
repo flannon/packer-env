@@ -1,4 +1,4 @@
 # Ignore all
 *
-# Except this
+#Except this
 ! .gitignore

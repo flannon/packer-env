@@ -55,9 +55,9 @@
     },
     "manifest_file": "{{ user `manifest_file` }}",
     "module_paths": [
-      "puppet/modules/local",
-      "puppet/modules/sites",
-      "puppet/modules/thirdparty"
+      "puppetlabs/code/environments/development/modules/local",
+      "puppetlabs/code/environments/development/modules/site",
+      "puppetlabs/code/environments/development/modules/thirdparty"
       ],
       "prevent_sudo": true
   },
@@ -83,12 +83,12 @@
     "cpus": "1",
     "disk_size": "65536",
     "headless": "",
-    "iso_checksum": "f90e4d28fa377669b2db16cbcb451fcb9a89d2460e3645993e30e137ac37d284",
+    "iso_checksum": "27bd866242ee058b7a5754e83d8ee8403e216b93d130d800852a96f41c34d86a",
     "iso_checksum_type": "sha256",
-    "iso_name": "CentOS-7-x86_64-Minimal-1511.iso",
+    "iso_name": "CentOS-7-x86_64-Minimal-1611.iso",
     "kickstart": "anaconda-ks7.cfg",
-    "manifest_file": "puppet/manifests/noop.pp",
-    "memory": "512",
+    "manifest_file": "puppetlabs/code/environments/development/manifests/archivesspace.pp",
+    "memory": "1024",
     "mirror": "http://mirrors.kernel.org/centos",
     "puppet_repo": "puppetlabs-release-pc1-el-7",
     "role": "default",

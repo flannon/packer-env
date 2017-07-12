@@ -1,3 +1,3 @@
-[submodule "puppet"]
-	path = puppet
-	url = ssh://git@github.com/flannon/packer-puppet-confdir
+[submodule "puppetlabs"]
+	path = puppetlabs
+	url = ssh://git@github.com/NYULibraries/packer-puppet-basedir.git

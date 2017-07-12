@@ -1,0 +1,85 @@
+{
+  "_comment": "Build with `packer build --var-files var/archivesspace_var.json _archivesspace.json`",
+  "builders": [{
+    "type": "virtualbox-iso",
+    "boot_wait": "10s",
+    "boot_command": [
+      "<esc><wait>linux vmlinuz inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/{{ user `kickstart` }} biosdevname=0 net.ifnames=0<enter>"
+    ],
+    "disk_size": "{{user `disk_size`}}",
+    "guest_additions_path": "VBoxGuestAdditions.iso",
+    "guest_os_type": "RedHat_64",
+    "headless": "{{user `headless`}}",
+    "http_directory": "http",
+    "iso_url": "file:///{{ pwd }}/iso/{{ user `iso_name` }}",
+    "iso_checksum": "{{ user `iso_checksum` }}",
+    "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+    "output_directory": "output-{{ user `vm_name` }}_{{ user `vm_service_version` }}_{{ build_type }}",
+    "vm_name": "{{ user `vm_name`}}_{{ user `vm_service_version` }}",
+    "ssh_timeout": "{{ user `ssh_timeout` }}",
+    "ssh_username": "{{ user `ssh_username` }}",
+    "ssh_password": "{{ user `ssh_password` }}",
+    "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
+      ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
+    ]
+  }], 
+
+  "provisioners": [
+  {
+    "type": "shell",
+    "environment_vars": [
+      "SSH_USERNAME={{ user `ssh_username` }}",
+      "SSH_PASSWORD={{ user `ssh_password` }}",
+      "PUPPET_REPO={{ user `puppet_repo` }}"
+      ],
+    "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+    "pause_before": "5s",
+    "scripts": [
+      "bin/virtualbox.sh",
+      "bin/vagrant.sh",
+      "bin/sshd.sh",
+      "bin/motd.sh",
+      "bin/locale.sh",
+      "bin/puppet.sh"
+    ]
+  },
+
+  {
+    "type": "puppet-masterless",
+    "execute_command": "if [ ! -z \"{{user `manifest_file` }}\" ]; then echo 'vagrant' | sudo -S -E {{ .FacterVars }} PATH=$PATH:/opt/puppetlabs/bin /opt/puppetlabs/bin/puppet apply --verbose --detailed-exitcodes --modulepath='{{ .ModulePath }}' {{ .ManifestFile }}; fi",
+    "facter" : {
+      "fqdn" : "{{ user `vm_name` }}"
+    },
+    "manifest_file": "{{ user `manifest_file` }}",
+    "module_paths": [
+      "puppetlabs/code/environments/development/modules/local",
+      "puppetlabs/code/environments/development/modules/site",
+      "puppetlabs/code/environments/development/modules/thirdparty"
+      ],
+      "prevent_sudo": true
+  },
+
+  {
+    "type": "file",
+    "source": "src/puppetlabs.tar.gz",
+    "destination": "/tmp/puppetlabs.tar.gz"
+  },
+  {
+    "type": "shell",
+    "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+    "pause_before": "5s",
+    "scripts": [
+    "bin/puppet-load.sh",
+    "bin/cleanup.sh",
+    "bin/rc.local.sh"
+    ]
+  }],
+
+  "post-processors": [{
+    "type": "vagrant",
+    "compression_level": "{{ user `compression_level` }}",
+    "output": "build/{{ user `role` }}/box/{{ .Provider }}/{{ user `role` }}-{{ user `vm_app_version` }}-{{ .Provider }}-{{ user `box_version` }}.box"
+  }]
+}
