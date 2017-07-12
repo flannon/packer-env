@@ -20,5 +20,5 @@
     "box_version": "0.1.3",
     "virtualbox_guest_os_type": "RedHat_64",
     "vm_name": "archivesspace",
-    "vm_service_version": "1.5.2"
+    "vm_app_version": "1.5.2"
 }
