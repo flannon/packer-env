@@ -2,6 +2,7 @@ box/*
 *.box
 build
 .bundle/
+_depricated
 .DS_Store
 output-*/
 Makefile.local

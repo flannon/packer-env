@@ -1,0 +1,11 @@
+{
+   "_comment": "Build with `packer build -var-file=var_files/centos7.2_variables.json centos7.2.json`",
+   "headless": "",
+   "kickstart": "anaconda-ks7.cfg",
+   "manifest_file": "puppet/manifests/default.pp",
+   "puppet_repo": "puppetlabs-release-pc1-el-7",
+   "ssh_timeout": "60m",
+   "virtualbox_guest_os_type": "RedHat_64",
+   "vm_name": "centos7-2-1511-jenkins",
+   "vagrantfile_template": "vagrantfile_templates/vagrantfile-cent7.2-imgfactory.tmpl"
+}
